@@ -6,4 +6,4 @@ Fork off of XertroVs Too Many Ghosts plugin.
 
 License: Public Domain
 
-Authors: ar..... / AR_-_s
+Authors: ar..... / AR_-_
