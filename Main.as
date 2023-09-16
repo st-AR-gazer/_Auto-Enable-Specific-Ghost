@@ -137,9 +137,9 @@ UI STUFF
 */
 
 void Notify(const string &in msg) {
-    UI::ShowNotification("Too Many Ghosts", msg, vec4(.2, .8, .5, .3));
+    UI::ShowNotification("Auto Load WR Ghost", msg, vec4(.2, .8, .5, .3));
 }
 
 void NotifyWarn(const string &in msg) {
-    UI::ShowNotification("Too Many Ghosts", msg, vec4(1, .5, .1, .5), 10000);
+    UI::ShowNotification("Auto Load WR Ghost", msg, vec4(1, .5, .1, .5), 10000);
 }
