@@ -1,8 +1,8 @@
 [meta]
-name     = "Too Many Ghosts"
+name     = "Auto Enable Specific Ghosts"
 author   = "XertroV"
 category = "MLHook"
-version  = "0.1.1"
+version  = "0.1.0"
 
 [script]
 #__DEFINES__

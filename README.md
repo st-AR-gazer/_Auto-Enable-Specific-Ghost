@@ -1,17 +1,9 @@
-# Too Many Ghosts
+# Auto Enable Specific Ghost
 
-**Requires MLHook** -- you must also have MLHook installed.
+<!-- **Requires MLHook** -- you must also have MLHook installed. -->
 
-Toggle lots of ghosts at once.
-By default, toggles the top 20.
-Up to 100 ghosts are toggle-able at once.
+Fork off of XertroVs Too Many Ghosts plugin.
 
 License: Public Domain
 
-Authors: XertroV
-
-Suggestions/feedback: @XertroV on Openplanet discord
-
-Code/issues: [https://github.com/XertroV/tm-too-many-ghosts](https://github.com/XertroV/tm-too-many-ghosts)
-
-GL HF
+Authors: ar..... / AR_-_s
