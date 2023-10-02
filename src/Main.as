@@ -185,10 +185,16 @@ void HideAllGhosts() {
     }
 }
 
+/**
+TMGame_Record_SpectateGhost
+TMGame_Record_ToggleGhost
+TMGame_Record_TogglePB
+ */
+
 void ToggleGhost(const string &in playerId) {
     if (!permissionsOkay) return;
     // trace('toggled ghost for ' + playerId);
-    MLHook::Queue_SH_SendCustomEvent("TMxSM_Race_Record_ToggleGhost", {playerId});
+    MLHook::Queue_SH_SendCustomEvent("TMGame_Record_ToggleGhost", {playerId});
     bool enabled = false;
     toggleCache.Get(playerId, enabled);
     toggleCache[playerId] = !enabled;
@@ -200,7 +206,7 @@ void ToggleSpectator() {
     if (lastRecordPid == "" || int(pids.Length) < g_numGhosts) {
         NotifyWarn("\n>> Toggle ghosts first at least once. <<\n");
     } else {
-        MLHook::Queue_SH_SendCustomEvent("TMxSM_Race_Record_SpectateGhost", {pids[g_numGhosts - 1]});
+        MLHook::Queue_SH_SendCustomEvent("TMGame_Record_SpectateGhost", {pids[g_numGhosts - 1]});
     }
 }
 
