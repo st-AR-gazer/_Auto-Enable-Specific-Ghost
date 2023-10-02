@@ -225,7 +225,7 @@ class NadeoApi {
 
     NadeoApi() {
         NadeoServices::AddAudience("NadeoLiveServices");
-        liveSvcUrl = NadeoServices::BaseURL();
+        liveSvcUrl = NadeoServices::BaseURLLive();
     }
 
     void AssertGoodPath(const string &in path) {
