@@ -64,9 +64,9 @@ array<string> UpdateMapRecords() {
         return array<string>();
     }
     records = tops[0]['top'];
-    if (records == null) return;
+    if (records is null) return array<string>();
     array<string> pids = {};
-    if (records.GetType() == Json::Type::Array && records.Length() > 0) {
+    if (records.GetType() == Json::Type::Array && records.Length > 0) {
         auto item = records[0];
         pids.InsertLast(item['accountId']);
     }
