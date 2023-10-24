@@ -83,7 +83,7 @@ void LoadWRGhost() {
 
 void ToggleGhost(const string &in playerId) {
     if (!permissionsOkay) return;
-    MLHook::Queue_SH_SendCustomEvent("TMxSM_Race_Record_ToggleGhost", {playerId});
+    MLHook::Queue_SH_SendCustomEvent("TMGame_Record_ToggleGhost", {playerId});
 }
 
 /*
