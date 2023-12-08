@@ -20,7 +20,7 @@ string s_currMap = "";
 
 void MapCoro() {
     while(true) {
-        sleep(273);
+        sleep(1500);
         if (s_currMap != CurrentMap) {
             s_currMap = CurrentMap;
             ResetToggleCache();
@@ -60,7 +60,7 @@ array<string> UpdateMapRecords() {
     auto tops = mapRecords['tops'];
     if (tops.GetType() != Json::Type::Array) {
         warn('api did not return an array for records; instead got: ' + Json::Write(mapRecords));
-        NotifyWarn("API did not return map records.");
+        // NotifyWarn("API did not return map records.");
         return array<string>();
     }
     records = tops[0]['top'];
