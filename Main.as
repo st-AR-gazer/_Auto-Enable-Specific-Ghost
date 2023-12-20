@@ -1,11 +1,32 @@
 NadeoApi@ api;
 bool permissionsOkay = false;
 
+bool enableGhosts = false;
+
 void Main() {
     CheckRequiredPermissions();
+    if (enableGhosts) return;
     @api = NadeoApi();
     MLHook::RequireVersionApi('0.3.1');
     startnew(MapCoro);
+}
+
+
+void RenderMenu() {
+    if (enableGhosts) {
+        if (UI::MenuItem("\\$2c2" + Icons::WikipediaW + " Auto Load WR Ghost\\$z")) {
+            
+            if (enableGhosts) {
+                if (UI::MenuItem("\\$2c2" + Icons::WikipediaW + Icons::Registered + Icons::ToggleOn + " Auto Load WR Ghost\\$z", "Ghost is currently enabled.")) {
+                    enableGhosts = false;
+                }
+            } else {
+                if (UI::MenuItem("\\$c22" + Icons::WikipediaW + Icons::Registered + Icons::ToggleOff + "\\$z Auto Load WR Ghost", "Ghost is currently disabled.")) {
+                    enableGhosts = true;
+                }
+            }
+        }
+    }
 }
 
 void CheckRequiredPermissions() {
