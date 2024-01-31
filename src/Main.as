@@ -1,24 +1,23 @@
 NadeoApi@ api;
 bool permissionsOkay = false;
-
-bool enableGhosts = false;
+//bool enableGhosts = false;
 
 void Main() {
     CheckRequiredPermissions();
-    if (enableGhosts) return;
+    if (g_windowVisible) return;
     @api = NadeoApi();
     MLHook::RequireVersionApi('0.3.1');
     startnew(MapCoro);
 }
 
 void RenderMenu() {
-    if (enableGhosts) {
+    if (g_windowVisible) {
         if (UI::MenuItem("\\$2c2" + Icons::WikipediaW + Icons::Registered + Icons::ToggleOn + "\\$z Auto Load WR Ghost", "Ghost is currently enabled.")) {
-            enableGhosts = false;
+            g_windowVisible = false;
         }
     } else {
         if (UI::MenuItem("\\$c22" + Icons::WikipediaW + Icons::Registered + Icons::ToggleOff + "\\$z Auto Load WR Ghost", "Ghost is currently disabled.")) {
-            enableGhosts = true;
+            g_windowVisible = true;
         }
     }
 }
@@ -91,7 +90,7 @@ array<string> UpdateMapRecords() {
 void LoadWRGhost() {
     array<string> pids = UpdateMapRecords();
     if (pids.Length > 0) {
-        Notify("Loading WR ghost...");
+        NotifyInfo("Loading WR ghost...");
         ToggleGhost(pids[0]);
     }
 }
@@ -100,6 +99,58 @@ void ToggleGhost(const string &in playerId) {
     if (!permissionsOkay) return;
     MLHook::Queue_SH_SendCustomEvent("TMGame_Record_ToggleGhost", {playerId});
 }
+
+void Update() {
+    if (!permissionsOkay) return;
+    if (CurrentMap.Length <= 0) return;
+    if (records is null) return;
+    
+    if (!enableGhosts) return;
+    
+    if (g_windowVisible) {
+        ToggleGhost(pids[0]);
+    }
+}
+
+
+
+/*
+API
+*/
+
+void log_trace(const string &in msg) {
+    trace(msg);
+}
+
+class NadeoApi {
+    string liveSvcUrl;
+
+    NadeoApi() {
+        NadeoServices::AddAudience("NadeoLiveServices");
+        liveSvcUrl = NadeoServices::BaseURLLive();
+    }
+
+    void AssertGoodPath(const string &in path) {
+        if (path.Length <= 0 || !path.StartsWith("/")) {
+            throw("API Paths should start with '/'!");
+        }
+    }
+}
+
+void Update() {
+    if (!permissionsOkay) return;
+    if (CurrentMap.Length <= 0) return;
+    if (records is null) return;
+    
+    if (!enableGhosts) return;
+    
+    if (g_windowVisible) {
+        ToggleGhost(pids[0]);
+    }
+}
+    }
+}
+
 
 /*
 API
