@@ -11,7 +11,6 @@ void Main() {
     startnew(MapCoro);
 }
 
-
 void RenderMenu() {
     if (enableGhosts) {
         if (UI::MenuItem("\\$2c2" + Icons::WikipediaW + Icons::Registered + Icons::ToggleOn + "\\$z Auto Load WR Ghost", "Ghost is currently enabled.")) {
@@ -32,13 +31,13 @@ void CheckRequiredPermissions() {
     }
 }
 
-string s_currMap = "";
+string storedCurrentMap = "";
 
 void MapCoro() {
     while(true) {
         sleep(1500);
-        if (s_currMap != CurrentMap) {
-            s_currMap = CurrentMap;
+        if (storedCurrentMap != CurrentMap) {
+            storedCurrentMap = CurrentMap;
             ResetToggleCache();
             LoadWRGhost();
         }
@@ -147,16 +146,4 @@ Json::Value FetchLiveEndpoint(const string &in route) {
     req.Start();
     while(!req.Finished()) { yield(); }
     return Json::Parse(req.String());
-}
-
-/*
-UI STUFF
-*/
-
-void Notify(const string &in msg) {
-    UI::ShowNotification("Auto Load WR Ghost", msg, vec4(.2, .8, .5, .3));
-}
-
-void NotifyWarn(const string &in msg) {
-    UI::ShowNotification("Auto Load WR Ghost", msg, vec4(1, .5, .1, .5), 10000);
 }
