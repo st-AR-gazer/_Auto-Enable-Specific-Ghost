@@ -1,6 +1,5 @@
 NadeoApi@ api;
 bool permissionsOkay = false;
-
 bool enableGhosts = false;
 
 void Main() {
@@ -91,7 +90,7 @@ array<string> UpdateMapRecords() {
 void LoadWRGhost() {
     array<string> pids = UpdateMapRecords();
     if (pids.Length > 0) {
-        Notify("Loading WR ghost...");
+        NotifyInfo("Loading WR ghost...");
         ToggleGhost(pids[0]);
     }
 }
