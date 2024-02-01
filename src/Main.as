@@ -1,23 +1,23 @@
 NadeoApi@ api;
 bool permissionsOkay = false;
-//bool enableGhosts = false;
+bool enableGhosts = false;
 
 void Main() {
     CheckRequiredPermissions();
-    if (g_windowVisible) return;
+    if (enableGhosts) return;
     @api = NadeoApi();
     MLHook::RequireVersionApi('0.3.1');
     startnew(MapCoro);
 }
 
 void RenderMenu() {
-    if (g_windowVisible) {
+    if (enableGhosts) {
         if (UI::MenuItem("\\$2c2" + Icons::WikipediaW + Icons::Registered + Icons::ToggleOn + "\\$z Auto Load WR Ghost", "Ghost is currently enabled.")) {
-            g_windowVisible = false;
+            enableGhosts = false;
         }
     } else {
         if (UI::MenuItem("\\$c22" + Icons::WikipediaW + Icons::Registered + Icons::ToggleOff + "\\$z Auto Load WR Ghost", "Ghost is currently disabled.")) {
-            g_windowVisible = true;
+            enableGhosts = true;
         }
     }
 }
@@ -30,13 +30,13 @@ void CheckRequiredPermissions() {
     }
 }
 
-string storedCurrentMap = "";
+string s_currMap = "";
 
 void MapCoro() {
     while(true) {
         sleep(1500);
-        if (storedCurrentMap != CurrentMap) {
-            storedCurrentMap = CurrentMap;
+        if (s_currMap != CurrentMap) {
+            s_currMap = CurrentMap;
             ResetToggleCache();
             LoadWRGhost();
         }
@@ -67,7 +67,6 @@ string get_CurrentMap() {
 }
 
 Json::Value records = Json::Value();
-
 array<string> UpdateMapRecords() {
     if (!permissionsOkay) return array<string>();
     Json::Value mapRecords = api.GetMapRecords("Personal_Best", CurrentMap, true, 1, 0);
@@ -90,10 +89,13 @@ array<string> UpdateMapRecords() {
 void LoadWRGhost() {
     array<string> pids = UpdateMapRecords();
     if (pids.Length > 0) {
-        NotifyInfo("Loading WR ghost...");
+
+        pids_Glob = pids;
         ToggleGhost(pids[0]);
     }
 }
+
+array<string> pids_Glob = {};
 
 void ToggleGhost(const string &in playerId) {
     if (!permissionsOkay) return;
@@ -101,18 +103,20 @@ void ToggleGhost(const string &in playerId) {
 }
 
 void Update() {
+
     if (!permissionsOkay) return;
+    
+    if (!enableGhosts) return;
+
     if (CurrentMap.Length <= 0) return;
     if (records is null) return;
     
-    if (!enableGhosts) return;
     
-    if (g_windowVisible) {
+    if (enableGhosts) {
+        array<string> pids = pids_Glob;
         ToggleGhost(pids[0]);
     }
 }
-
-
 
 /*
 API
@@ -124,65 +128,22 @@ void log_trace(const string &in msg) {
 
 class NadeoApi {
     string liveSvcUrl;
-
     NadeoApi() {
         NadeoServices::AddAudience("NadeoLiveServices");
         liveSvcUrl = NadeoServices::BaseURLLive();
     }
-
     void AssertGoodPath(const string &in path) {
         if (path.Length <= 0 || !path.StartsWith("/")) {
             throw("API Paths should start with '/'!");
         }
     }
-}
-
-void Update() {
-    if (!permissionsOkay) return;
-    if (CurrentMap.Length <= 0) return;
-    if (records is null) return;
-    
-    if (!enableGhosts) return;
-    
-    if (g_windowVisible) {
-        ToggleGhost(pids[0]);
-    }
-}
-    }
-}
-
-
-/*
-API
-*/
-
-void log_trace(const string &in msg) {
-    trace(msg);
-}
-
-class NadeoApi {
-    string liveSvcUrl;
-
-    NadeoApi() {
-        NadeoServices::AddAudience("NadeoLiveServices");
-        liveSvcUrl = NadeoServices::BaseURLLive();
-    }
-
-    void AssertGoodPath(const string &in path) {
-        if (path.Length <= 0 || !path.StartsWith("/")) {
-            throw("API Paths should start with '/'!");
-        }
-    }
-
     const string LengthAndOffset(uint length, uint offset) {
         return "length=" + length + "&offset=" + offset;
     }
-
     Json::Value CallLiveApiPath(const string &in path) {
         AssertGoodPath(path);
         return FetchLiveEndpoint(liveSvcUrl + path);
     }
-
     Json::Value GetMapRecords(const string &in seasonUid, const string &in mapUid, bool onlyWorld = true, uint length=5, uint offset=0) {
         string qParams = onlyWorld ? "?onlyWorld=true" : "";
         if (onlyWorld) qParams += "&" + LengthAndOffset(length, offset);
