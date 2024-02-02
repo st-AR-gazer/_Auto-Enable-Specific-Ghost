@@ -1,6 +1,5 @@
 NadeoApi@ api;
 bool permissionsOkay = false;
-bool enableGhosts = false;
 
 void Main() {
     CheckRequiredPermissions();
@@ -8,26 +7,6 @@ void Main() {
     @api = NadeoApi();
     MLHook::RequireVersionApi('0.3.1');
     startnew(MapCoro);
-}
-
-void RenderMenu() {
-    if (enableGhosts) {
-        if (UI::MenuItem("\\$2c2" + Icons::WikipediaW + Icons::Registered + Icons::ToggleOn + "\\$z Auto Load WR Ghost", "Ghost is currently enabled.")) {
-            enableGhosts = false;
-        }
-    } else {
-        if (UI::MenuItem("\\$c22" + Icons::WikipediaW + Icons::Registered + Icons::ToggleOff + "\\$z Auto Load WR Ghost", "Ghost is currently disabled.")) {
-            enableGhosts = true;
-        }
-    }
-}
-
-void CheckRequiredPermissions() {
-    permissionsOkay = Permissions::ViewRecords() && Permissions::PlayRecords();
-    if (!permissionsOkay) {
-        NotifyWarn("Your edition of the game does not support playing against record ghosts.\n\nThis plugin won't work, sorry :(");
-        while(true) { sleep(10); }
-    }
 }
 
 string s_currMap = "";
@@ -44,13 +23,11 @@ void MapCoro() {
 }
 
 dictionary toggleCache;
+
 void ResetToggleCache() {
     toggleCache.DeleteAll();
     records = Json::Value();
 }
-
-[Setting hidden]
-bool g_windowVisible = false;
 
 CTrackMania@ get_app() {
     return cast<CTrackMania>(GetApp());
@@ -66,14 +43,23 @@ string get_CurrentMap() {
     return map.MapInfo.MapUid;
 }
 
+[Setting category="General" name="Enable Ghosts"]
+bool enableGhosts = true;
+
+[Setting category="General" name="Set start auto load position" description="Set the position of the record to load, 1 = 1st place [...] 41 = 41st, etc."]
+int setOffset = 0;
+
+[Setting category="General" name="Set load range" description="Set the range of records to load, 1 = 1st place, 2 = 1st and 2nd, etc."]
+int setRange = 1;
+
 Json::Value records = Json::Value();
 array<string> UpdateMapRecords() {
     if (!permissionsOkay) return array<string>();
-    Json::Value mapRecords = api.GetMapRecords("Personal_Best", CurrentMap, true, 1, 0);
+    Json::Value mapRecords = api.GetMapRecords("Personal_Best", CurrentMap, true, setRange, setOffset);
     auto tops = mapRecords['tops'];
     if (tops.GetType() != Json::Type::Array) {
-        warn('api did not return an array for records; instead got: ' + Json::Write(mapRecords));
-        // NotifyWarn("API did not return map records.");
+        log('api did not return an array for records; instead got: ' + Json::Write(mapRecords), LogLevel::Warn, 61);
+        NotifyWarn("API did not return map records.");
         return array<string>();
     }
     records = tops[0]['top'];
@@ -134,7 +120,7 @@ class NadeoApi {
     }
     void AssertGoodPath(const string &in path) {
         if (path.Length <= 0 || !path.StartsWith("/")) {
-            throw("API Paths should start with '/'!");
+            log("API Paths should start with '/'!", LogLevel::Error, 123);
         }
     }
     const string LengthAndOffset(uint length, uint offset) {
@@ -152,8 +138,7 @@ class NadeoApi {
 }
 
 Json::Value FetchLiveEndpoint(const string &in route) {
-    log_trace("[FetchLiveEndpoint] Requesting: " + route);
-    while (!NadeoServices::IsAuthenticated("NadeoLiveServices")) { yield(); }
+    log("Fetching: " + route, LogLevel::Info, 141);
     auto req = NadeoServices::Get("NadeoLiveServices", route);
     req.Start();
     while(!req.Finished()) { yield(); }
