@@ -1,11 +1,24 @@
 NadeoApi@ api;
 bool permissionsOkay = false;
 
+[Setting name="Enable Ghosts" description=""]
+bool S_enableGhosts;
+
+[Setting category="General" name="Set start auto load position" description="Set the position of the record to load, 1 = 1st place [...] 41 = 41st, etc."]
+int S_enablePositionOffset = 0;
+
+[Setting category="General" name="Set load range" description="Set the range of records to load, 1 = 1st place, 2 = 1st and 2nd, etc." min="1" max="10"]
+int S_setGhostRange = 1;
+
+
 void Main() {
-    CheckRequiredPermissions();
-    if (enableGhosts) return;
+    if (!CheckPermsSuccessful()) return;
+    if (!S_enableGhosts) return;
+
     @api = NadeoApi();
+    
     MLHook::RequireVersionApi('0.3.1');
+
     startnew(MapCoro);
 }
 
@@ -42,15 +55,6 @@ string get_CurrentMap() {
     if (map is null) return "";
     return map.MapInfo.MapUid;
 }
-
-[Setting category="General" name="Enable Ghosts"]
-bool enableGhosts = true;
-
-[Setting category="General" name="Set start auto load position" description="Set the position of the record to load, 1 = 1st place [...] 41 = 41st, etc."]
-int setOffset = 0;
-
-[Setting category="General" name="Set load range" description="Set the range of records to load, 1 = 1st place, 2 = 1st and 2nd, etc."]
-int setRange = 1;
 
 Json::Value records = Json::Value();
 array<string> UpdateMapRecords() {
@@ -92,13 +96,13 @@ void Update() {
 
     if (!permissionsOkay) return;
     
-    if (!enableGhosts) return;
+    if (!S_enableGhosts) return;
 
     if (CurrentMap.Length <= 0) return;
     if (records is null) return;
     
     
-    if (enableGhosts) {
+    if (S_enableGhosts) {
         array<string> pids = pids_Glob;
         ToggleGhost(pids[0]);
     }
