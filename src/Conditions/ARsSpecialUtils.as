@@ -109,3 +109,28 @@ namespace _Json {
         }
     }
 }
+
+namespace _UI {
+    void SimpleTooltip(const string &in msg) {
+        if (UI::IsItemHovered()) {
+            UI::BeginTooltip();
+            UI::Text(msg);
+            UI::EndTooltip();
+        }
+    }
+
+    void DisabledButtonOnly(const string &in msg, const vec2 &in size = vec2 ( )) {
+        UI::BeginDisabled();
+        UI::Button(msg, size);
+        UI::EndDisabled();
+    }
+
+    bool DisabledButton(bool disabled, const string &in msg, const vec2 &in size = vec2 ( )) {
+        if (disabled) {
+            DisabledButtonOnly(msg, size);
+            return false;
+        } else {
+            return UI::Button(msg, size);
+        }
+    }
+}
