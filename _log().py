@@ -28,25 +28,32 @@ def get_function_name(lines, index):
 def parse_params(log_content):
     params = []
     temp = ''
+    nested_level = 0
     in_string = False
+
     for char in log_content:
-        if char == '"':
-            in_string = not in_string
-        if char == ',' and not in_string:
-            if temp:
-                params.append(temp.strip())
-                temp = ''
+        if char == '"' and not in_string:
+            in_string = True
+        elif char == '"' and in_string:
+            in_string = False
+        elif char == '(' and not in_string:
+            nested_level += 1
+        elif char == ')' and not in_string:
+            nested_level -= 1
+
+        if char == ',' and not in_string and nested_level == 0:
+            params.append(temp.strip())
+            temp = ''
         else:
             temp += char
 
     if temp:
         params.append(temp.strip())
 
-    if in_string:
+    if in_string or nested_level != 0:
         raise ValueError("Malformed statement detected in log parameters.")
 
     return params
-
 
 def clean_and_update_params(params, index, lines):
     while len(params) < 4:

@@ -1,6 +1,6 @@
 /* 
-    I'ma be real, everything here should probably actually be in openplanet propper, but makeing a featurerequest is a lot of work... 
-    And since they're not already there allready, the ods of them being added are slim imo... 
+    I'ma be real, everything here should probably actually be in openplanet propper, but makeing a feature-request is a lot of work...
+    And since they're not already there allready (at least as far as I can tell...), the ods of them being added are slim imo...
 */
 
 namespace _Text {
@@ -71,7 +71,7 @@ namespace _Json {
         int depth = 0;
         bool inString = false;
 
-        for (uint i = 0; i < jsonStr.Length; ++i) {
+        for (int i = 0; i < jsonStr.Length; ++i) {
             string currentChar = jsonStr.SubStr(i, 1);
 
             if (currentChar == "\"") inString = !inString;
@@ -106,31 +106,6 @@ namespace _Json {
                 indent += "    ";
             }
             return indent;
-        }
-    }
-}
-
-namespace _UI {
-    void SimpleTooltip(const string &in msg) {
-        if (UI::IsItemHovered()) {
-            UI::BeginTooltip();
-            UI::Text(msg);
-            UI::EndTooltip();
-        }
-    }
-
-    void DisabledButtonOnly(const string &in msg, const vec2 &in size = vec2 ( )) {
-        UI::BeginDisabled();
-        UI::Button(msg, size);
-        UI::EndDisabled();
-    }
-
-    bool DisabledButton(bool disabled, const string &in msg, const vec2 &in size = vec2 ( )) {
-        if (disabled) {
-            DisabledButtonOnly(msg, size);
-            return false;
-        } else {
-            return UI::Button(msg, size);
         }
     }
 }
