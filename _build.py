@@ -1,9 +1,9 @@
 import argparse
+# Empty = No overwrite by default
+
+import argparse
 import os
 import zipfile
-
-# Empty = No overwrite by default
-build_name_overwrite = ""
 
 parser = argparse.ArgumentParser(description="Builds the plugin and creates an .op file.")
 parser.add_argument('-s', '--sanitize', action='store_true', help='Enable filename sanitization.')
