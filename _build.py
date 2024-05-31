@@ -1,4 +1,4 @@
-import argparse
+build_name_overwrite = ""
 # Empty = No overwrite by default
 
 import argparse
