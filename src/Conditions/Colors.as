@@ -17,11 +17,11 @@ namespace _col {
 
     bool verbose = false;
 
-    string CS(const string &in msg, array<string> colors = {"033CC", "33FFFF"}, GradientMode mode = GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
+    string CS(const string &in msg, array<string> colors = {"0033CC", "33FFFF"}, GradientMode mode = GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
         return ColorizeString(msg, colors, mode, useEscapeCharacters, flipped, _verbose);
     }
 
-    string CS(array<string> msgs, array<string> colors = {"033CC", "33FFFF"}, GradientMode mode = GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
+    string CS(array<string> msgs, array<string> colors = {"0033CC", "33FFFF"}, GradientMode mode = GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
         return ColorizeString(msgs, colors, mode, useEscapeCharacters, flipped, _verbose);
     }
 
