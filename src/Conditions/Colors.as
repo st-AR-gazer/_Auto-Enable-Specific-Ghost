@@ -70,7 +70,7 @@ namespace _col {
             string strippedMsg = msg.Trim();
             if (verbose) log("Stripped message: " + strippedMsg, LogLevel::Info, 71, "ProcessString");
             array<string> chars;
-            uint i = 0;
+            int i = 0;
             while (i < strippedMsg.Length) {
                 if ((i + 2 < strippedMsg.Length) && ((strippedMsg[i] & 0xF0) == 0xE0)) {
                     chars.InsertLast(strippedMsg.SubStr(i, 3));
@@ -85,8 +85,8 @@ namespace _col {
             int charCount = int(chars.Length);
             array<string> coloredChars;
 
-            for (int i = 0; i < charCount; ++i) {
-                float position = float(i) / (charCount - 1);
+            for (int z = 0; z < charCount; ++z) {
+                float position = float(z) / (charCount - 1);
                 vec3 interpolatedColor = InterpolateColors(colorArray, position, mode);
                 if (verbose) log("Position: " + tostring(position) + " Interpolated Color: " + tostring(interpolatedColor), LogLevel::Info, 91, "ProcessString");
                 interpolatedColor = NormalizeColor(interpolatedColor);
@@ -97,8 +97,8 @@ namespace _col {
                 } else {
                     colorCode = "$" + colorCode;
                 }
-                if (verbose) log("Character: " + chars[i] + " Color code: " + colorCode, LogLevel::Info, 100, "ProcessString");
-                coloredChars.InsertLast(colorCode + chars[i]);
+                if (verbose) log("Character: " + chars[z] + " Color code: " + colorCode, LogLevel::Info, 100, "ProcessString");
+                coloredChars.InsertLast(colorCode + chars[z]);
             }
 
             string result = JoinArray(coloredChars);
