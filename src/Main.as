@@ -18,6 +18,7 @@ int previousGhostRankOffset = 0;
 bool mapRecordsLoaded = false;
 
 dictionary toggleCache;
+dictionary ghostStates;
 
 void MapCoro() {
     while(true) {
@@ -37,6 +38,7 @@ void MapCoro() {
 
 void ResetToggleCache() {
     toggleCache.DeleteAll();
+    ghostStates.DeleteAll();
     records = Json::Value();
     lastRecordPid = "";
     mapRecordsLoaded = false;
@@ -138,38 +140,29 @@ void LoadMapRecords() {
 
 void ToggleLoadedGhosts(array<string> pids) {
     NotifyInfo("Toggling " + pids.Length + " ghosts...");
-    array<string> enabledPids = toggleCache.GetKeys();
-
-    for (uint i = 0; i < enabledPids.Length; i++) {
-        string playerId = enabledPids[i];
-        if (pids.Find(playerId) == -1 || int(i) >= g_numGhosts) {
-            bool enabled = false;
-            toggleCache.Get(playerId, enabled);
-            if (enabled) {
-                ToggleGhost(playerId);
-            }
-        }
-    }
 
     for (uint i = 0; i < pids.Length; i++) {
-        if (int(i) < g_numGhosts) {
-            string playerId = pids[i];
-            bool enabled = false;
-            toggleCache.Get(playerId, enabled);
-            if (!enabled) {
-                ToggleGhost(playerId);
-            }
-        }
+        ToggleGhost(pids[i], false);
+    }
+
+    for (uint i = g_ghostRankOffset; i < g_ghostRankOffset + g_numGhosts && i < pids.Length; i++) {
+        ToggleGhost(pids[i], true);
     }
 }
 
-void ToggleGhost(const string &in playerId) {
+void ToggleGhost(const string &in playerId, bool enable) {
     if (!permissionsOkay) return;
-    log("Toggling ghost for playerId: " + playerId, LogLevel::Info, 121, "ToggleGhost");
+
+    bool currentState;
+    if (ghostStates.Get(playerId, currentState)) {
+        if (currentState == enable) {
+            return;
+        }
+    }
+
+    log((enable ? "Enabling" : "Disabling") + " ghost for playerId: " + playerId, LogLevel::Info, 121, "ToggleGhost");
     MLHook::Queue_SH_SendCustomEvent(g_MLHookCustomEvent, {playerId});
-    bool enabled = false;
-    toggleCache.Get(playerId, enabled);
-    toggleCache[playerId] = !enabled;
+    ghostStates[playerId] = enable;
 }
 
 void HideAllGhosts() {
@@ -179,7 +172,7 @@ void HideAllGhosts() {
         bool enabled = false;
         toggleCache.Get(pid, enabled);
         if (enabled) {
-            ToggleGhost(pid);
+            ToggleGhost(pid, false);
             toggleCache[pid] = false;
         }
     }
