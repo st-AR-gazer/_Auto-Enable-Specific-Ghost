@@ -5,7 +5,7 @@ void Main() {
     if (!permissionsOkay) return;
 
     FetchManifest();
-    
+
     @api = NadeoApi();
     MLHook::RequireVersionApi('0.3.1');
     startnew(MapCoro);
@@ -16,6 +16,8 @@ bool previousEnableGhosts = false;
 int previousNumGhosts = 1;
 int previousGhostRankOffset = 0;
 bool mapRecordsLoaded = false;
+
+dictionary toggleCache;
 
 void MapCoro() {
     while(true) {
@@ -32,8 +34,6 @@ void MapCoro() {
         }
     }
 }
-
-dictionary toggleCache;
 
 void ResetToggleCache() {
     toggleCache.DeleteAll();
@@ -75,20 +75,25 @@ bool g_enableGhosts = true;
 
 void Update(float dt) {
     if (g_enableGhosts && !previousEnableGhosts) {
+        startnew(MapCoro);
         startnew(LoadMapRecords);
     } else if (!g_enableGhosts && previousEnableGhosts) {
         startnew(HideAllGhosts);
     }
 
     if (g_enableGhosts && (g_numGhosts != previousNumGhosts || g_ghostRankOffset != previousGhostRankOffset)) {
-        // If the number of ghosts or rank offset changes, reload the map records
-        ResetToggleCache();
-        startnew(LoadMapRecords);
+        startnew(UpdateVisibleGhosts);
     }
 
     previousEnableGhosts = g_enableGhosts;
     previousNumGhosts = g_numGhosts;
     previousGhostRankOffset = g_ghostRankOffset;
+}
+
+void UpdateVisibleGhosts() {
+    HideAllGhosts();
+    yield();
+    LoadMapRecords();
 }
 
 array<string> UpdateMapRecords() {
@@ -135,7 +140,15 @@ void ToggleLoadedGhosts(array<string> pids) {
     NotifyInfo("Toggling " + pids.Length + " ghosts...");
     for (uint i = 0; i < pids.Length; i++) {
         auto playerId = pids[i];
-        ToggleGhost(playerId);
+        if (toggleCache.Exists(playerId)) {
+            bool isEnabled = false;
+            toggleCache.Get(playerId, isEnabled);
+            if (!isEnabled) {
+                ToggleGhost(playerId);
+            }
+        } else {
+            ToggleGhost(playerId);
+        }
     }
 }
 
@@ -149,12 +162,14 @@ void ToggleGhost(const string &in playerId) {
 }
 
 void HideAllGhosts() {
-    auto pids = toggleCache.GetKeys();
-    for (uint i = 0; i < pids.Length; i++) {
-        auto pid = pids[i];
-        if (bool(toggleCache[pid])) {
+    array<string> keys = toggleCache.GetKeys();
+    for (uint i = 0; i < keys.Length; i++) {
+        auto pid = keys[i];
+        bool enabled = false;
+        toggleCache.Get(pid, enabled);
+        if (enabled) {
             ToggleGhost(pid);
-            yield();
+            toggleCache[pid] = false;
         }
     }
 }
@@ -193,7 +208,7 @@ Json::Value FetchLiveEndpoint(const string &in route) {
     log("[FetchLiveEndpoint] Requesting: " + route, LogLevel::Info, 159, "LengthAndOffset");
     while (!NadeoServices::IsAuthenticated("NadeoLiveServices")) { yield(); }
     auto req = NadeoServices::Get("NadeoLiveServices", route);
-    req.Start(); 
+    req.Start();
     while(!req.Finished()) { yield(); }
     return Json::Parse(req.String());
 }

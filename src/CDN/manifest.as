@@ -28,7 +28,7 @@ void ParseManifest(const string &in reqBody) {
         return;
     }
 
-    bool shouldUpdate = manifest["latestVersion"];
+    bool shouldUpdate = manifest["shouldUpdate"];
     if (!shouldUpdate) return;
 
     g_leaderboard = manifest["GetMapRecords"];
