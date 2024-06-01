@@ -138,16 +138,27 @@ void LoadMapRecords() {
 
 void ToggleLoadedGhosts(array<string> pids) {
     NotifyInfo("Toggling " + pids.Length + " ghosts...");
-    for (uint i = 0; i < pids.Length; i++) {
-        auto playerId = pids[i];
-        if (toggleCache.Exists(playerId)) {
-            bool isEnabled = false;
-            toggleCache.Get(playerId, isEnabled);
-            if (!isEnabled) {
+    array<string> enabledPids = toggleCache.GetKeys();
+
+    for (uint i = 0; i < enabledPids.Length; i++) {
+        string playerId = enabledPids[i];
+        if (pids.Find(playerId) == -1 || int(i) >= g_numGhosts) {
+            bool enabled = false;
+            toggleCache.Get(playerId, enabled);
+            if (enabled) {
                 ToggleGhost(playerId);
             }
-        } else {
-            ToggleGhost(playerId);
+        }
+    }
+
+    for (uint i = 0; i < pids.Length; i++) {
+        if (int(i) < g_numGhosts) {
+            string playerId = pids[i];
+            bool enabled = false;
+            toggleCache.Get(playerId, enabled);
+            if (!enabled) {
+                ToggleGhost(playerId);
+            }
         }
     }
 }
