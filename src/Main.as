@@ -58,7 +58,7 @@ int g_numGhosts = 1;
 int g_ghostRankOffset = 0;
 
 [Setting name="Enable Ghosts"]
-bool g_enableGhosts = false;
+bool g_enableGhosts = true;
 
 void Update() {
     if (g_enableGhosts && !previousEnableGhosts) {
