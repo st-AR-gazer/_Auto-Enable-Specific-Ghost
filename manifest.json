@@ -1,0 +1,6 @@
+{
+    "MLHook::Queue_SH_SendCustomEvent_ToggleGhost": "TMGame_Record_ToggleGhost",
+    "MLHook::Queue_SH_SendCustomEvent_SpectateGhost": "TMGame_Record_SpectateGhost",
+    "GetMapRecords": "Personal_Best",
+    "shouldUpdate": true
+}
