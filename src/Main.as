@@ -12,15 +12,23 @@ void Main() {
 }
 
 string s_currMap = "";
+bool previousEnableGhosts = false;
+int previousNumGhosts = 1;
+int previousGhostRankOffset = 0;
+bool mapRecordsLoaded = false;
 
 void MapCoro() {
     while(true) {
         sleep(273);
-        if (!g_enableGhosts) return;
+        if (!g_enableGhosts) continue;
         if (s_currMap != CurrentMap) {
             s_currMap = CurrentMap;
+            log("Map changed to: " + s_currMap, LogLevel::Info, 22, "MapCoro");
             ResetToggleCache();
+            log("Reset toggle cache", LogLevel::Info, 24, "MapCoro");
             LoadMapRecords();
+            log("Loaded map records", LogLevel::Info, 26, "MapCoro");
+            mapRecordsLoaded = true;
         }
     }
 }
@@ -31,6 +39,7 @@ void ResetToggleCache() {
     toggleCache.DeleteAll();
     records = Json::Value();
     lastRecordPid = "";
+    mapRecordsLoaded = false;
 }
 
 CTrackMania@ get_app() {
@@ -38,11 +47,15 @@ CTrackMania@ get_app() {
 }
 
 CGameManiaAppPlayground@ get_cmap() {
+    auto app = get_app();
+    if (app is null) return null;
     return app.Network.ClientManiaAppPlayground;
 }
 
 string get_CurrentMap() {
-    auto map = GetApp().RootMap;
+    auto app = get_app();
+    if (app is null) return "";
+    auto map = app.RootMap;
     if (map is null) return "";
     return map.MapInfo.MapUid;
 }
@@ -51,29 +64,42 @@ string lastRecordPid;
 int lastOffset = -1;
 Json::Value records = Json::Value();
 
-[Setting name="Number of ghosts to show" min="1" max="10"]
+[Setting category="General" name="Number of ghosts to show" min="1" max="10"]
 int g_numGhosts = 1;
 
-[Setting name="Ghost rank offset" min="0" max="100"]
+[Setting category="General" name="Ghost rank offset" min="0" max="100"]
 int g_ghostRankOffset = 0;
 
-[Setting name="Enable Ghosts"]
+[Setting category="General" name="Enable Ghosts"]
 bool g_enableGhosts = true;
 
-void Update() {
+void Update(float dt) {
     if (g_enableGhosts && !previousEnableGhosts) {
-        startnew(MapCoro);
+        startnew(LoadMapRecords);
+    } else if (!g_enableGhosts && previousEnableGhosts) {
+        startnew(HideAllGhosts);
     }
+
+    if (g_enableGhosts && (g_numGhosts != previousNumGhosts || g_ghostRankOffset != previousGhostRankOffset)) {
+        // If the number of ghosts or rank offset changes, reload the map records
+        ResetToggleCache();
+        startnew(LoadMapRecords);
+    }
+
     previousEnableGhosts = g_enableGhosts;
+    previousNumGhosts = g_numGhosts;
+    previousGhostRankOffset = g_ghostRankOffset;
 }
 
-bool previousEnableGhosts = false;
-
 array<string> UpdateMapRecords() {
-    if (!permissionsOkay) return array<string>();
+    if (!permissionsOkay || api is null) return array<string>();
+
+    string currentMap = CurrentMap;
+    if (currentMap == "") return array<string>();
+
     if (records.GetType() != Json::Type::Array || int(records.Length) < g_numGhosts || lastOffset != g_ghostRankOffset) {
         lastOffset = g_ghostRankOffset;
-        Json::Value mapRecords = api.GetMapRecords(g_leaderboard, CurrentMap, true, g_numGhosts, g_ghostRankOffset);
+        Json::Value mapRecords = api.GetMapRecords("Personal_Best", currentMap, true, g_numGhosts, g_ghostRankOffset);
         auto tops = mapRecords['tops'];
         if (tops.GetType() != Json::Type::Array) {
             if (mapRecords.Length == 0) {
@@ -100,7 +126,7 @@ void LoadMapRecords() {
 
     array<string> pids = UpdateMapRecords();
     if (pids.Length > 0) {
-        log("Loaded records for map: " + CurrentMap, LogLevel::Info, 103, "LoadMapRecords");
+        log("Loaded records for map: " + CurrentMap, LogLevel::Info, 106, "LoadMapRecords");
         ToggleLoadedGhosts(pids);
     }
 }
@@ -115,11 +141,22 @@ void ToggleLoadedGhosts(array<string> pids) {
 
 void ToggleGhost(const string &in playerId) {
     if (!permissionsOkay) return;
-    log("Toggling ghost for playerId: " + playerId, LogLevel::Info, 118, "ToggleGhost");
+    log("Toggling ghost for playerId: " + playerId, LogLevel::Info, 121, "ToggleGhost");
     MLHook::Queue_SH_SendCustomEvent(g_MLHookCustomEvent, {playerId});
     bool enabled = false;
     toggleCache.Get(playerId, enabled);
     toggleCache[playerId] = !enabled;
+}
+
+void HideAllGhosts() {
+    auto pids = toggleCache.GetKeys();
+    for (uint i = 0; i < pids.Length; i++) {
+        auto pid = pids[i];
+        if (bool(toggleCache[pid])) {
+            ToggleGhost(pid);
+            yield();
+        }
+    }
 }
 
 class NadeoApi {
@@ -153,7 +190,7 @@ class NadeoApi {
 }
 
 Json::Value FetchLiveEndpoint(const string &in route) {
-    log("[FetchLiveEndpoint] Requesting: " + route, LogLevel::Info, 156, "LengthAndOffset");
+    log("[FetchLiveEndpoint] Requesting: " + route, LogLevel::Info, 159, "LengthAndOffset");
     while (!NadeoServices::IsAuthenticated("NadeoLiveServices")) { yield(); }
     auto req = NadeoServices::Get("NadeoLiveServices", route);
     req.Start(); 
