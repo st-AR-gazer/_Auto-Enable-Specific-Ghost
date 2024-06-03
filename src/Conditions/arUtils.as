@@ -54,7 +54,7 @@ namespace _IO {
         if (IO::FolderExists(path)) {
             OpenExplorerPath(path);
         } else {
-            log("Folder does not exist: " + path, LogLevel::Info, 57, "OpenFolder");
+            log("Folder does not exist: " + path, LogLevel::Info, 62, "OpenFolder");
         }
     }
 }
