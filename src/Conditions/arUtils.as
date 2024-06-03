@@ -57,6 +57,13 @@ namespace _IO {
             log("Folder does not exist: " + path, LogLevel::Info, 62, "OpenFolder");
         }
     }
+
+    void SaveToFile(const string &in path, const string &in content) {
+        IO::File file;
+        file.Open(path, IO::FileMode::Write);
+        file.Write(content);
+        file.Close();
+    }
 }
 
 namespace _Json {
