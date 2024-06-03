@@ -1,13 +1,12 @@
-string Colorize(const string &in msg, array<string> colors = {"0033CC", "33FFFF"}, color::GradientMode mode = color::GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
-    return color::CS(msg, colors, mode, useEscapeCharacters, flipped, _verbose);
+string Colorize(const string &in msg, array<string> colors = {"0033CC", "33FFFF"}, colorize::GradientMode mode = colorize::GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
+    return colorize::CS(msg, colors, mode, useEscapeCharacters, flipped, _verbose);
 }
 
-string Colorize(const array<string> &in msgs, array<string> colors = {"0033CC", "33FFFF"}, color::GradientMode mode = color::GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
-    return color::CS(msgs, colors, mode, useEscapeCharacters, flipped, _verbose);
+string Colorize(const array<string> &in msgs, array<string> colors = {"0033CC", "33FFFF"}, colorize::GradientMode mode = colorize::GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
+    return colorize::CS(msgs, colors, mode, useEscapeCharacters, flipped, _verbose);
 }
 
-namespace color {
-
+namespace colorize {
     enum GradientMode { 
         linear, 
         exponential, 
@@ -216,4 +215,4 @@ namespace color {
         }
     } // end of namespace Hidden
 
-} // end of namespace _col
+} // end of namespace colorize
