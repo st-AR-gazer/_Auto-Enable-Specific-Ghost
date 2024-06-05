@@ -14,15 +14,44 @@ namespace _Text {
     }
 }
 
+namespace _UI {
+    void SimpleTooltip(const string &in msg) {
+        if (UI::IsItemHovered()) {
+            UI::SetNextWindowSize(400, 0, UI::Cond::Appearing);
+            UI::BeginTooltip();
+            UI::TextWrapped(msg);
+            UI::EndTooltip();
+        }
+    }
+
+    void DisabledButton(const string &in text, const vec2 &in size = vec2 ( )) {
+        UI::BeginDisabled();
+        UI::Button(text, size);
+        UI::EndDisabled();
+    }
+
+    bool DisabledButton(bool disabled, const string &in text, const vec2 &in size = vec2 ( )) {
+        if (disabled) {
+            DisabledButton(text, size);
+            return false;
+        } else {
+            return UI::Button(text, size);
+        }
+    }
+}
+
 namespace _IO {
     string ReadFileToEnd(const string &in path) {
-        if (IO::FileExists(path)) {
-            IO::File file(path, IO::FileMode::Read);
-            string content = file.ReadToEnd();
-            file.Close();
-            return content;
-        }
-        return "";
+        IO::File file(path, IO::FileMode::Read);
+        string content = file.ReadToEnd();
+        file.Close();
+        return content;
+    }
+
+    string ReadSourceFileToEnd(const string &in path) {
+        IO::FileSource f(path);
+        string content = f.ReadToEnd();
+        return content;
     }
 
     string GetFileName(const string &in path) {
@@ -54,8 +83,15 @@ namespace _IO {
         if (IO::FolderExists(path)) {
             OpenExplorerPath(path);
         } else {
-            log("Folder does not exist: " + path, LogLevel::Info, 57, "OpenFolder");
+            print("Folder does not exist: " + path + " | LogLevel::Info | OpenFolder");
         }
+    }
+
+    void SaveToFile(const string &in path, const string &in content) {
+        IO::File file;
+        file.Open(path, IO::FileMode::Write);
+        file.Write(content);
+        file.Close();
     }
 }
 
