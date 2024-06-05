@@ -25,6 +25,10 @@ void ResetToggleCache() {
     mapRecordsLoaded = false;
 }
 
+CTrackMania@ get_app() {
+    return cast<CTrackMania>(GetApp());
+}
+
 string get_CurrentMap() {
     auto app = get_app();
     if (app is null) return "";

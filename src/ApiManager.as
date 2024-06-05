@@ -1,3 +1,5 @@
+NadeoApi@ api;
+
 class NadeoApi {
     string liveSvcUrl;
 
