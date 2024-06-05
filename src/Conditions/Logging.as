@@ -16,10 +16,10 @@ enum LogLevel {
     _
 };
 
-////////////// CHANGE TO "true" ON RELEASE  //////////////
+//////////// CHANGE TO "true" ON RELEASE  ////////////
 [Setting category="z~DEV" name="Show default OP logs"]
 bool S_showDefaultLogs = false;
-//////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////
 
 [Setting category="z~DEV" name="Show Debug logs"]
 bool S_showDebugLogs = true;
