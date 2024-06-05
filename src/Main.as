@@ -17,3 +17,5 @@ int g_ghostRankOffset = 0;
 
 [Setting category="General" name="Enable Ghosts"]
 bool g_enableGhosts = true;
+
+[Setting category="General" name="PLEASE NOTE: Changing these settings will require a map reload! (It's only checked when outside of map)"]
