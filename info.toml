@@ -2,7 +2,7 @@
 name     = "Auto Enable Specific Ghosts"
 author   = "ar....."
 category = "Utilities"
-version  = "0.1.0"
+version  = "0.2.0"
 
 [script]
 dependencies = ["MLHook", "NadeoServices"]

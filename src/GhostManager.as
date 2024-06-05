@@ -11,8 +11,7 @@ void Update(float dt) {
     if (IsInMap()) return;
 
     if (g_enableGhosts && !previousEnableGhosts) {
-        startnew(MapCoro);
-        startnew(LoadMapRecords);
+        startnew(EnableAllGhosts);
     } else if (!g_enableGhosts && previousEnableGhosts) {
         startnew(HideAllGhosts);
     }
@@ -58,6 +57,11 @@ void ToggleGhost(const string &in playerId, bool enable) {
     log((enable ? "Enabling" : "Disabling") + " ghost for playerId: " + playerId, LogLevel::Info, 121, "ToggleGhost");
     MLHook::Queue_SH_SendCustomEvent(g_MLHookCustomEvent, {playerId});
     ghostStates[playerId] = enable;
+}
+
+void EnableAllGhosts() {
+    startnew(MapCoro);
+    startnew(LoadMapRecords);
 }
 
 void HideAllGhosts() {
