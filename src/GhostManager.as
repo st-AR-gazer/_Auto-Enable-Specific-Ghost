@@ -7,8 +7,12 @@ string lastRecordPid;
 int lastOffset = -1;
 Json::Value records = Json::Value();
 
+bool wrGhostEnabled = false;
+
 void Update(float dt) {
     if (IsInMap()) return;
+
+    CheckHotkey();
 
     if (g_enableGhosts && !previousEnableGhosts) {
         startnew(EnableAllGhosts);
@@ -24,6 +28,7 @@ void Update(float dt) {
     previousNumGhosts = g_numGhosts;
     previousGhostRankOffset = g_ghostRankOffset;
 }
+
 
 
 void UpdateVisibleGhosts() {
@@ -75,4 +80,24 @@ void HideAllGhosts() {
             toggleCache[pid] = false;
         }
     }
+}
+
+void CheckHotkey() {
+    if (UI::IsKeyPressed(g_toggleWrGhostHotkey)) {
+        ToggleWrGhost();
+    }
+}
+
+void ToggleWrGhost() {
+    wrGhostEnabled = !wrGhostEnabled;
+    NotifyInfo((wrGhostEnabled ? "Enabling" : "Disabling") + " WR ghost...");
+    ToggleGhost(GetWrGhostId(), wrGhostEnabled);
+}
+
+string GetWrGhostId() {
+    array<string> pids = UpdateMapRecords();
+    if (pids.Length > 0) {
+        return pids[0];
+    }
+    return "";
 }

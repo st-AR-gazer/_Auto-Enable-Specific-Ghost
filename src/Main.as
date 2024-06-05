@@ -9,6 +9,11 @@ void Main() {
     startnew(MapCoro);
 }
 
+[Setting category="General" name="Toggle WR Ghost Hotkey"]
+VirtualKey g_toggleWrGhostHotkey = VirtualKey::F5;
+
+
+
 [Setting category="General" name="Number of ghosts to show" min="1" max="10"]
 int g_numGhosts = 1;
 
