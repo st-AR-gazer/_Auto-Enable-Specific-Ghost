@@ -8,6 +8,8 @@ int lastOffset = -1;
 Json::Value records = Json::Value();
 
 void Update(float dt) {
+    if (IsInMap()) return;
+
     if (g_enableGhosts && !previousEnableGhosts) {
         startnew(MapCoro);
         startnew(LoadMapRecords);
@@ -23,6 +25,7 @@ void Update(float dt) {
     previousNumGhosts = g_numGhosts;
     previousGhostRankOffset = g_ghostRankOffset;
 }
+
 
 void UpdateVisibleGhosts() {
     HideAllGhosts();
