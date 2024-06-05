@@ -16,12 +16,13 @@ enum LogLevel {
     _
 };
 
+////////////// CHANGE TO "true" ON RELEASE  //////////////
 [Setting category="z~DEV" name="Show default OP logs"]
 bool S_showDefaultLogs = false;
+//////////////////////////////////////////////////////////
 
 [Setting category="z~DEV" name="Show Debug logs"]
 bool S_showDebugLogs = true;
-
 
 [Setting category="z~DEV" name="Show Info logs (INFO)"]
 bool S_showInfoLogs = true;
@@ -38,8 +39,8 @@ bool S_showErrorLogs = true;
 [Setting category="z~DEV" name="Show Test logs (TEST)"]
 bool S_showTestLogs = true;
 
-[Setting category="z~DEV" name="Show Debug logs (D)"]
-bool S_showDLogs = true;
+[Setting category="z~DEV" name="Show Dark logs (Dark)"]
+bool S_showDarkLogs = true;
 
 [Setting category="z~DEV" name="Show Placeholder logs (PLACEHOLDER)"]
 bool S_showPlaceholderLogs = true;
@@ -83,7 +84,7 @@ void log(const string &in msg, LogLevel level = LogLevel::Info, int line = -1, s
         case LogLevel::Warn:  doLog = S_showWarnLogs;        break;
         case LogLevel::Error: doLog = S_showErrorLogs;       break;
         case LogLevel::Test:  doLog = S_showTestLogs;        break;
-        case LogLevel::Dark:  doLog = S_showDLogs;           break;
+        case LogLevel::Dark:  doLog = S_showDarkLogs;        break;
         case LogLevel::_:     doLog = S_showPlaceholderLogs; break;
     }
 
@@ -97,7 +98,7 @@ void log(const string &in msg, LogLevel level = LogLevel::Info, int line = -1, s
             case LogLevel::Warn:  if(!S_showDefaultLogs) { print("\\$ff0[WARN]  " +       "\\$z" + "\\$cc0" + lineInfo + " : " + _functionName + " : \\$z" + msg); } else { warn(msg);  } break;
             case LogLevel::Error: if(!S_showDefaultLogs) { print("\\$f00[ERROR] " +       "\\$z" + "\\$c00" + lineInfo + " : " + _functionName + " : \\$z" + msg); } else { error(msg); } break;
             case LogLevel::Test:  if(!S_showDefaultLogs) { print("\\$aaa[TEST]  " +       "\\$z" + "\\$aaa" + lineInfo + " : " + _functionName + " : \\$z" + msg); } else { trace(msg); } break;
-            case LogLevel::Dark:  if(!S_showDefaultLogs) { print("\\$777[Dark]  " +       "\\$z" + "\\$777" + lineInfo + " : " + _functionName + " : \\$z" + msg); } else { trace(msg); } break;
+            case LogLevel::Dark:  if(!S_showDefaultLogs) { print("\\$777[DARK]  " +       "\\$z" + "\\$777" + lineInfo + " : " + _functionName + " : \\$z" + msg); } else { trace(msg); } break;
             case LogLevel::_:     if(!S_showDefaultLogs) { print("\\$333[PLACEHOLDER] " + "\\$z" + "\\$333" + lineInfo + " : " + _functionName + " : \\$z" + msg); } else { trace(msg); } break;
         }
     }
