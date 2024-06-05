@@ -7,11 +7,11 @@ void MapCoro() {
         if (!g_enableGhosts) continue;
         if (s_currMap != CurrentMap) {
             s_currMap = CurrentMap;
-            log("Map changed to: " + s_currMap, LogLevel::Info, 22, "MapCoro");
+            //log("Map changed to: " + s_currMap, LogLevel::Info, 22, "MapCoro");
             ResetToggleCache();
-            log("Reset toggle cache", LogLevel::Info, 24, "MapCoro");
+            //log("Reset toggle cache", LogLevel::Info, 24, "MapCoro");
             LoadMapRecords();
-            log("Loaded map records", LogLevel::Info, 26, "MapCoro");
+            //log("Loaded map records", LogLevel::Info, 26, "MapCoro");
             mapRecordsLoaded = true;
         }
     }
@@ -62,7 +62,7 @@ array<string> UpdateMapRecords() {
 
     if (records.GetType() != Json::Type::Array || int(records.Length) < g_numGhosts || lastOffset != g_ghostRankOffset) {
         lastOffset = g_ghostRankOffset;
-        Json::Value mapRecords = api.GetMapRecords("Personal_Best", currentMap, true, g_numGhosts, g_ghostRankOffset);
+        Json::Value mapRecords = api.GetMapRecords(g_leaderboard, currentMap, true, g_numGhosts, g_ghostRankOffset);
         auto tops = mapRecords['tops'];
         if (tops.GetType() != Json::Type::Array) {
             if (mapRecords.Length == 0) {
@@ -73,14 +73,19 @@ array<string> UpdateMapRecords() {
         }
         records = tops[0]['top'];
     }
+
     array<string> pids = {};
+    string wrPid = "";
     if (records.GetType() == Json::Type::Array) {
         for (uint i = 0; i < records.Length; i++) {
             auto item = records[i];
+            if (i == 0) {
+                wrPid = item['accountId'];
+            }
             pids.InsertLast(item['accountId']);
         }
     }
-    lastRecordPid = pids[pids.Length - 1];
+    lastRecordPid = wrPid;
     return pids;
 }
 
@@ -89,7 +94,7 @@ void LoadMapRecords() {
 
     array<string> pids = UpdateMapRecords();
     if (pids.Length > 0) {
-        log("Loaded records for map: " + CurrentMap, LogLevel::Info, 106, "LoadMapRecords");
+        //log("Loaded records for map: " + CurrentMap, LogLevel::Info, 106, "LoadMapRecords");
         ToggleLoadedGhosts(pids);
     }
 }

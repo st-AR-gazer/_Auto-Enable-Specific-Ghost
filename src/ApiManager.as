@@ -31,7 +31,7 @@ class NadeoApi {
 }
 
 Json::Value FetchLiveEndpoint(const string &in route) {
-    log("[FetchLiveEndpoint] Requesting: " + route, LogLevel::Info, 159, "LengthAndOffset");
+    //log("[FetchLiveEndpoint] Requesting: " + route, LogLevel::Info, 159, "LengthAndOffset");
     while (!NadeoServices::IsAuthenticated("NadeoLiveServices")) { yield(); }
     auto req = NadeoServices::Get("NadeoLiveServices", route);
     req.Start();

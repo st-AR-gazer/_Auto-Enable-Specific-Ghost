@@ -12,8 +12,6 @@ bool wrGhostEnabled = false;
 void Update(float dt) {
     if (IsInMap()) return;
 
-    CheckHotkey();
-
     if (g_enableGhosts && !previousEnableGhosts) {
         startnew(EnableAllGhosts);
     } else if (!g_enableGhosts && previousEnableGhosts) {
@@ -28,8 +26,6 @@ void Update(float dt) {
     previousNumGhosts = g_numGhosts;
     previousGhostRankOffset = g_ghostRankOffset;
 }
-
-
 
 void UpdateVisibleGhosts() {
     HideAllGhosts();
@@ -59,7 +55,7 @@ void ToggleGhost(const string &in playerId, bool enable) {
         }
     }
 
-    log((enable ? "Enabling" : "Disabling") + " ghost for playerId: " + playerId, LogLevel::Info, 121, "ToggleGhost");
+    log((enable ? "Toggleing (Enabling)" : "Toggleing (Disabling)") + " ghost for playerId: " + playerId, LogLevel::Info, 121, "ToggleGhost");
     MLHook::Queue_SH_SendCustomEvent(g_MLHookCustomEvent, {playerId});
     ghostStates[playerId] = enable;
 }
@@ -82,19 +78,20 @@ void HideAllGhosts() {
     }
 }
 
-void CheckHotkey() {
-    if (UI::IsKeyPressed(g_toggleWrGhostHotkey)) {
+UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
+    if (key == g_toggleWrGhostHotkey && down) {
         ToggleWrGhost();
     }
+    return UI::InputBlocking::DoNothing;
 }
 
 void ToggleWrGhost() {
     wrGhostEnabled = !wrGhostEnabled;
     NotifyInfo((wrGhostEnabled ? "Enabling" : "Disabling") + " WR ghost...");
-    ToggleGhost(GetWrGhostId(), wrGhostEnabled);
+    ToggleGhost(GetOffsetGhostId(), wrGhostEnabled);
 }
 
-string GetWrGhostId() {
+string GetOffsetGhostId() {
     array<string> pids = UpdateMapRecords();
     if (pids.Length > 0) {
         return pids[0];
