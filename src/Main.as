@@ -26,11 +26,11 @@ void MapCoro() {
         if (!g_enableGhosts) continue;
         if (s_currMap != CurrentMap) {
             s_currMap = CurrentMap;
-            log("Map changed to: " + s_currMap, LogLevel::Info, 22, "MapCoro");
+            log("Map changed to: " + s_currMap, LogLevel::Info, 29, "MapCoro");
             ResetToggleCache();
-            log("Reset toggle cache", LogLevel::Info, 24, "MapCoro");
+            log("Reset toggle cache", LogLevel::Info, 31, "MapCoro");
             LoadMapRecords();
-            log("Loaded map records", LogLevel::Info, 26, "MapCoro");
+            log("Loaded map records", LogLevel::Info, 33, "MapCoro");
             mapRecordsLoaded = true;
         }
     }
@@ -124,6 +124,11 @@ array<string> UpdateMapRecords() {
             pids.InsertLast(item['accountId']);
         }
     }
+    if (pids.Length == 0) {
+        log("No records found for map: " + currentMap, LogLevel::Warn, 128, "UpdateMapRecords");
+        NotifyWarn("No records found for map: " + currentMap);
+        return pids;
+    }
     lastRecordPid = pids[pids.Length - 1];
     return pids;
 }
@@ -133,7 +138,7 @@ void LoadMapRecords() {
 
     array<string> pids = UpdateMapRecords();
     if (pids.Length > 0) {
-        log("Loaded records for map: " + CurrentMap, LogLevel::Info, 106, "LoadMapRecords");
+        log("Loaded records for map: " + CurrentMap, LogLevel::Info, 141, "LoadMapRecords");
         ToggleLoadedGhosts(pids);
     }
 }
@@ -145,7 +150,7 @@ void ToggleLoadedGhosts(array<string> pids) {
         ToggleGhost(pids[i], false);
     }
 
-    for (uint i = g_ghostRankOffset; i < g_ghostRankOffset + g_numGhosts && i < pids.Length; i++) {
+    for (uint i = g_ghostRankOffset; int(i) < g_ghostRankOffset + g_numGhosts && i < pids.Length; i++) {
         ToggleGhost(pids[i], true);
     }
 }
@@ -160,7 +165,7 @@ void ToggleGhost(const string &in playerId, bool enable) {
         }
     }
 
-    log((enable ? "Enabling" : "Disabling") + " ghost for playerId: " + playerId, LogLevel::Info, 121, "ToggleGhost");
+    log((enable ? "Enabling" : "Disabling") + " ghost for playerId: " + playerId, LogLevel::Info, 168, "ToggleGhost");
     MLHook::Queue_SH_SendCustomEvent(g_MLHookCustomEvent, {playerId});
     ghostStates[playerId] = enable;
 }
@@ -209,7 +214,7 @@ class NadeoApi {
 }
 
 Json::Value FetchLiveEndpoint(const string &in route) {
-    log("[FetchLiveEndpoint] Requesting: " + route, LogLevel::Info, 159, "LengthAndOffset");
+    log("[FetchLiveEndpoint] Requesting: " + route, LogLevel::Info, 217, "LengthAndOffset");
     while (!NadeoServices::IsAuthenticated("NadeoLiveServices")) { yield(); }
     auto req = NadeoServices::Get("NadeoLiveServices", route);
     req.Start();
