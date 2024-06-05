@@ -7,11 +7,11 @@ void MapCoro() {
         if (!g_enableGhosts) continue;
         if (s_currMap != CurrentMap) {
             s_currMap = CurrentMap;
-            //log("Map changed to: " + s_currMap, LogLevel::Info, 22, "MapCoro");
+            //log("Map changed to: " + s_currMap, LogLevel::Info, 10, "MapCoro");
             ResetToggleCache();
-            //log("Reset toggle cache", LogLevel::Info, 24, "MapCoro");
+            //log("Reset toggle cache", LogLevel::Info, 12, "MapCoro");
             LoadMapRecords();
-            //log("Loaded map records", LogLevel::Info, 26, "MapCoro");
+            //log("Loaded map records", LogLevel::Info, 14, "MapCoro");
             mapRecordsLoaded = true;
         }
     }
@@ -94,7 +94,7 @@ void LoadMapRecords() {
 
     array<string> pids = UpdateMapRecords();
     if (pids.Length > 0) {
-        //log("Loaded records for map: " + CurrentMap, LogLevel::Info, 106, "LoadMapRecords");
+        //log("Loaded records for map: " + CurrentMap, LogLevel::Info, 97, "LoadMapRecords");
         ToggleLoadedGhosts(pids);
     }
 }

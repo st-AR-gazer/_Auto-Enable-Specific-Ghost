@@ -34,9 +34,9 @@ namespace colorize {
 
     string ColorizeString(const string &in msg, array<string> colors = {"0033CC", "33FFFF"}, GradientMode mode = GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
         verbose = _verbose;
-        if (verbose) log("Starting ColorizeString (single string)", LogLevel::Info, 30, "ColorizeString");
+        if (verbose) log("Starting ColorizeString (single string)", LogLevel::Info, 37, "ColorizeString");
         if (msg == "" || msg.Length == 1) {
-            if (verbose) log("Message is empty or single character: " + msg, LogLevel::Info, 32, "ColorizeString");
+            if (verbose) log("Message is empty or single character: " + msg, LogLevel::Info, 39, "ColorizeString");
             return msg;
         }
         return Hidden::ProcessString(msg, colors, mode, useEscapeCharacters, flipped);
@@ -44,12 +44,12 @@ namespace colorize {
 
     string ColorizeString(const array<string> &in msgs, array<string> colors = {"0033CC", "33FFFF"}, GradientMode mode = GradientMode::linear, bool useEscapeCharacters = true, bool flipped = false, bool _verbose = false) {
         verbose = _verbose;
-        if (verbose) log("Starting ColorizeString (array of strings)", LogLevel::Info, 40, "ColorizeString");
+        if (verbose) log("Starting ColorizeString (array of strings)", LogLevel::Info, 47, "ColorizeString");
 
         array<string> result;
         for (uint i = 0; i < msgs.Length; ++i) {
             if (msgs[i] == "" || msgs[i].Length == 1) {
-                if (verbose) log("Message is empty or single character: " + msgs[i], LogLevel::Info, 45, "ColorizeString");
+                if (verbose) log("Message is empty or single character: " + msgs[i], LogLevel::Info, 52, "ColorizeString");
                 result.InsertLast(msgs[i]);
             } else {
                 result.InsertLast(Hidden::ProcessString(msgs[i], colors, mode, useEscapeCharacters, flipped));
@@ -60,22 +60,22 @@ namespace colorize {
     
     namespace Hidden {
         string ProcessString(const string &in msg, array<string> colors, GradientMode mode, bool useEscapeCharacters, bool flipped) {
-            if (verbose) log("Processing string: " + msg, LogLevel::Info, 56, "ProcessString");
+            if (verbose) log("Processing string: " + msg, LogLevel::Info, 63, "ProcessString");
 
             array<vec3> colorArray;
             for (uint i = 0; i < colors.Length; ++i) {
                 vec3 parsedColor = ParseColor(colors[i]);
-                if (verbose) log("Parsed color: " + colors[i] + " -> " + tostring(parsedColor), LogLevel::Info, 61, "ProcessString");
+                if (verbose) log("Parsed color: " + colors[i] + " -> " + tostring(parsedColor), LogLevel::Info, 68, "ProcessString");
                 colorArray.InsertLast(parsedColor);
             }
 
             if (flipped) {
-                if (verbose) log("Flipping color array", LogLevel::Info, 66, "ProcessString");
+                if (verbose) log("Flipping color array", LogLevel::Info, 73, "ProcessString");
                 colorArray.Reverse();
             }
 
             string strippedMsg = msg.Trim();
-            if (verbose) log("Stripped message: " + strippedMsg, LogLevel::Info, 71, "ProcessString");
+            if (verbose) log("Stripped message: " + strippedMsg, LogLevel::Info, 78, "ProcessString");
             array<string> chars;
             int i = 0;
             while (i < strippedMsg.Length) {
@@ -88,33 +88,33 @@ namespace colorize {
                 }
             }
 
-            if (verbose) log("Message split into characters: " + tostring(chars.Length), LogLevel::Info, 84, "ProcessString");
+            if (verbose) log("Message split into characters: " + tostring(chars.Length), LogLevel::Info, 91, "ProcessString");
             int charCount = int(chars.Length);
             array<string> coloredChars;
 
             for (int z = 0; z < charCount; ++z) {
                 float position = float(z) / (charCount - 1);
                 vec3 interpolatedColor = InterpolateColors(colorArray, position, mode);
-                if (verbose) log("Position: " + tostring(position) + " Interpolated Color: " + tostring(interpolatedColor), LogLevel::Info, 91, "ProcessString");
+                if (verbose) log("Position: " + tostring(position) + " Interpolated Color: " + tostring(interpolatedColor), LogLevel::Info, 98, "ProcessString");
                 interpolatedColor = NormalizeColor(interpolatedColor);
-                if (verbose) log("Normalized Color: " + tostring(interpolatedColor), LogLevel::Info, 93, "ProcessString");
+                if (verbose) log("Normalized Color: " + tostring(interpolatedColor), LogLevel::Info, 100, "ProcessString");
                 string colorCode = Text::FormatGameColor(interpolatedColor);
                 if (useEscapeCharacters) {
                     colorCode = "\\" + colorCode;
                 } else {
                     colorCode = "$" + colorCode;
                 }
-                if (verbose) log("Character: " + chars[z] + " Color code: " + colorCode, LogLevel::Info, 100, "ProcessString");
+                if (verbose) log("Character: " + chars[z] + " Color code: " + colorCode, LogLevel::Info, 107, "ProcessString");
                 coloredChars.InsertLast(colorCode + chars[z]);
             }
 
             string result = JoinArray(coloredChars);
-            if (verbose) log("Final processed string: " + result, LogLevel::Info, 105, "ProcessString");
+            if (verbose) log("Final processed string: " + result, LogLevel::Info, 112, "ProcessString");
             return result;
         }
 
         vec3 ParseColor(const string &in color) {
-            if (verbose) log("Parsing color: " + color, LogLevel::Info, 110, "ParseColor");
+            if (verbose) log("Parsing color: " + color, LogLevel::Info, 117, "ParseColor");
             if (color.StartsWith('#')) {
                 return HexToRgb(color.SubStr(1));
             } else if (color.SubStr(0, 4) == "vec3") {
@@ -127,7 +127,7 @@ namespace colorize {
         }
 
         vec3 HexToRgb(const string &in hex) {
-            if (verbose) log("Converting hex: " + hex + " to RGB", LogLevel::Info, 123, "HexToRgb");
+            if (verbose) log("Converting hex: " + hex + " to RGB", LogLevel::Info, 130, "HexToRgb");
             if (hex.Length == 3) {
                 vec3 x = vec3(
                     Text::ParseInt(hex.SubStr(0, 1) + hex.SubStr(0, 1), 16),
@@ -143,7 +143,7 @@ namespace colorize {
                 );
                 return x;
             } else {
-                if (verbose) log("Invalid hex color: " + hex, LogLevel::Error, 139, "HexToRgb");
+                if (verbose) log("Invalid hex color: " + hex, LogLevel::Error, 146, "HexToRgb");
                 return vec3(255, 255, 255);
             }
         }
@@ -153,12 +153,12 @@ namespace colorize {
             normalizedColor.x = color.x / 255.0;
             normalizedColor.y = color.y / 255.0;
             normalizedColor.z = color.z / 255.0;
-            if (verbose) log("Normalized color: " + tostring(normalizedColor), LogLevel::Info, 149, "NormalizeColor");
+            if (verbose) log("Normalized color: " + tostring(normalizedColor), LogLevel::Info, 156, "NormalizeColor");
             return normalizedColor;
         }
 
         vec3 InterpolateColors(const array<vec3> &in colors, float position, GradientMode mode) {
-            if (verbose) log("Interpolating colors at position: " + tostring(position) + " with mode: " + tostring(mode), LogLevel::Info, 154, "InterpolateColors");
+            if (verbose) log("Interpolating colors at position: " + tostring(position) + " with mode: " + tostring(mode), LogLevel::Info, 161, "InterpolateColors");
             float p;
             if (mode == linear) {
                 p = position;
@@ -188,11 +188,11 @@ namespace colorize {
                 p = position;
             }
             
-            if (verbose) log("Position: " + tostring(position) + " P: " + tostring(p), LogLevel::Info, 184, "InterpolateColors");
+            if (verbose) log("Position: " + tostring(position) + " P: " + tostring(p), LogLevel::Info, 191, "InterpolateColors");
             uint startIdx = uint(Math::Floor(p * (colors.Length - 1)));
             uint endIdx = Math::Min(startIdx + 1, colors.Length - 1);
             float localPos = (p * (colors.Length - 1)) - startIdx;
-            if (verbose) log("StartIdx: " + tostring(startIdx) + " EndIdx: " + tostring(endIdx) + " LocalPos: " + tostring(localPos), LogLevel::Info, 188, "InterpolateColors");
+            if (verbose) log("StartIdx: " + tostring(startIdx) + " EndIdx: " + tostring(endIdx) + " LocalPos: " + tostring(localPos), LogLevel::Info, 195, "InterpolateColors");
             return Mix(colors[startIdx], colors[endIdx], localPos);
         }
 
@@ -205,10 +205,10 @@ namespace colorize {
         }
 
         string JoinArray(array<string> &in arr) {
-            if (verbose) log("Joining array of strings with length: " + tostring(arr.Length), LogLevel::Info, 201, "JoinArray");
+            if (verbose) log("Joining array of strings with length: " + tostring(arr.Length), LogLevel::Info, 208, "JoinArray");
             string result = "";
             for (uint i = 0; i < arr.Length; ++i) {
-                if (verbose) log("Appending: " + arr[i], LogLevel::Info, 204, "JoinArray");
+                if (verbose) log("Appending: " + arr[i], LogLevel::Info, 211, "JoinArray");
                 result += arr[i];
             }
             return result;

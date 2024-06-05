@@ -55,7 +55,7 @@ void ToggleGhost(const string &in playerId, bool enable) {
         }
     }
 
-    log((enable ? "Toggleing (Enabling)" : "Toggleing (Disabling)") + " ghost for playerId: " + playerId, LogLevel::Info, 121, "ToggleGhost");
+    log((enable ? "Toggleing (Enabling)" : "Toggleing (Disabling)") + " ghost for playerId: " + playerId, LogLevel::Info, 58, "ToggleGhost");
     MLHook::Queue_SH_SendCustomEvent(g_MLHookCustomEvent, {playerId});
     ghostStates[playerId] = enable;
 }

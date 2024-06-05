@@ -18,7 +18,7 @@ enum LogLevel {
 
 //////////// CHANGE TO "true" ON RELEASE  ////////////
 [Setting category="z~DEV" name="Show default OP logs"]
-bool S_showDefaultLogs = false;
+bool S_showDefaultLogs = true;
 //////////////////////////////////////////////////////
 
 [Setting category="z~DEV" name="Show Debug logs"]
