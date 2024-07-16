@@ -34,11 +34,7 @@ void UpdateVisibleGhosts() {
 }
 
 void ToggleLoadedGhosts(array<string> pids) {
-    if (GetApp().PlaygroundScript is null) { NotifyWarn("Plugin is currently disabled for all online modes\n 
-                                                         (will work on getting a whitelist out for allowed\n 
-                                                         online modes). This is to prevent the ability to\n
-                                                         load ghosts in COTD mostly, which some consider to\n
-                                                         be cheating."); return; }
+    if (GetApp().PlaygroundScript is null) return; // Placeholder for when we can properly whitelist specific gamemodes
 
     NotifyInfo("Toggling " + pids.Length + " ghosts...");
 
@@ -52,6 +48,9 @@ void ToggleLoadedGhosts(array<string> pids) {
 }
 
 void ToggleGhost(const string &in playerId, bool enable) {
+    // Placeholder for when we can properly whitelist specific gamemodes
+    if (GetApp().PlaygroundScript is null) { NotifyWarn("Plugin is currently disabled for all online modes\n (will work on getting a whitelist out for allowed\n online modes). This is to prevent the ability to\n load ghosts in COTD mostly, which some consider to\n be cheating."); return; }
+
     if (!permissionsOkay) return;
 
     bool currentState;
@@ -92,6 +91,8 @@ UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
 }
 
 void ToggleWrGhost() {
+    if (GetApp().PlaygroundScript is null) return; // Placeholder for when we can properly whitelist specific gamemodes
+
     wrGhostEnabled = !wrGhostEnabled;
     NotifyInfo((wrGhostEnabled ? "Enabling" : "Disabling") + " WR ghost...");
     ToggleGhost(GetOffsetGhostId(), wrGhostEnabled);
