@@ -34,6 +34,8 @@ void UpdateVisibleGhosts() {
 }
 
 void ToggleLoadedGhosts(array<string> pids) {
+    if (GetApp().PlaygroundScript is null) { NotifyWarn("Plugin is currently disabled for all online modes (will work on getting a whitelist out for allowed online modes). This is to prevent the ability to load ghosts in COTD mostly, which some consider to be cheating."); return; }
+
     NotifyInfo("Toggling " + pids.Length + " ghosts...");
 
     for (uint i = 0; i < pids.Length; i++) {
