@@ -91,7 +91,9 @@ UI::InputBlocking OnKeyPress(bool down, VirtualKey key) {
 }
 
 void ToggleWrGhost() {
-    if (GetApp().PlaygroundScript is null) return; // Placeholder for when we can properly whitelist specific gamemodes
+    auto si = cast<CTrackManiaNetworkServerInfo>(GetApp().Network.ServerInfo);
+    auto gameMode = si.CurGameModeStr;
+    // if (GetApp().PlaygroundScript is null) return; // Placeholder for when we can properly whitelist specific gamemodes
 
     wrGhostEnabled = !wrGhostEnabled;
     NotifyInfo((wrGhostEnabled ? "Enabling" : "Disabling") + " WR ghost...");
